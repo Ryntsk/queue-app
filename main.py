@@ -11,7 +11,7 @@ import uvicorn
 API_TOKEN = '8227759215:AAHGhF_RgsB5ZY4Kyn3KRWD9511eAqwKB7o'
 WEB_APP_URL = 'https://ryntsk.github.io/queue-app/'
 # URL твоего будущего сервиса на Render (получишь после деплоя)
-BASE_URL = "https://твой-проект.onrender.com"
+BASE_URL = "https://queue-app-4mvt.onrender.com"
 
 # Инициализация
 bot = Bot(token=API_TOKEN)
@@ -73,4 +73,5 @@ async def startup():
 
 
 if __name__ == "__main__":
+
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
