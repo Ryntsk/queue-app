@@ -1,45 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .slot { 
-            background: white; border-radius: 8px; padding: 15px; 
-            text-align: center; border: 1px solid #ddd; cursor: pointer;
-        }
-        .slot.occupied { background: #ffcccc; cursor: not-allowed; }
-        .slot.my-spot { background: #ccffcc; border: 2px solid #4caf50; }
-        .slot-num { font-weight: bold; display: block; margin-bottom: 5px; }
-    </style>
-</head>
-<body>
-    <h3>Выберите место в очереди</h3>
-    <div class="grid" id="queueGrid">
-        </div>
+const tg = window.Telegram.WebApp;
+const API_URL = "https://твой-проект.onrender.com"; // Ссылка с Render
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
+async function updateGrid() {
+    const response = await fetch(`${API_URL}/get_queue`);
+    const data = await response.json();
+    
+    const grid = document.getElementById('queueGrid');
+    grid.innerHTML = ''; // Очищаем
 
-        const grid = document.getElementById('queueGrid');
-        
-        // Генерируем 30 мест
-        for (let i = 1; i <= 30; i++) {
-            const div = document.createElement('div');
-            div.className = 'slot';
-            div.innerHTML = `<span class="slot-num">${i}</span> <small>Свободно</small>`;
-            
+    for (let i = 1; i <= 30; i++) {
+        const div = document.createElement('div');
+        div.className = 'slot';
+        if (data[i]) {
+            div.classList.add('occupied');
+            div.innerHTML = `<span class="slot-num">${i}</span><small>${data[i]}</small>`;
+        } else {
+            div.innerHTML = `<span class="slot-num">${i}</span><small>Свободно</small>`;
             div.onclick = () => {
-                if (!div.classList.contains('occupied')) {
-                    // Здесь будет отправка данных боту
-                    tg.sendData(`record_me_${i}`); 
-                    tg.close();
-                }
+                tg.sendData(JSON.stringify({slot: i}));
             };
-            grid.appendChild(div);
         }
-    </script>
-</body>
-</html>
+        grid.appendChild(div);
+    }
+}
+
+// Обновлять каждые 3 секунды для "живого" эффекта
+setInterval(updateGrid, 3000);
+updateGrid();
