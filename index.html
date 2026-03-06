@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .slot { 
+            background: white; border-radius: 8px; padding: 15px; 
+            text-align: center; border: 1px solid #ddd; cursor: pointer;
+        }
+        .slot.occupied { background: #ffcccc; cursor: not-allowed; }
+        .slot.my-spot { background: #ccffcc; border: 2px solid #4caf50; }
+        .slot-num { font-weight: bold; display: block; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h3>Выберите место в очереди</h3>
+    <div class="grid" id="queueGrid">
+        </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Развернуть на весь экран
+
+        const grid = document.getElementById('queueGrid');
+        
+        // Генерируем 30 мест
+        for (let i = 1; i <= 30; i++) {
+            const div = document.createElement('div');
+            div.className = 'slot';
+            div.innerHTML = `<span class="slot-num">${i}</span> <small>Свободно</small>`;
+            
+            div.onclick = () => {
+                if (!div.classList.contains('occupied')) {
+                    // Здесь будет отправка данных боту
+                    tg.sendData(`record_me_${i}`); 
+                    tg.close();
+                }
+            };
+            grid.appendChild(div);
+        }
+    </script>
+</body>
+</html>
